@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol AiaJSONSerializable {
+public protocol AiaJSONSerializable {
     
 }
