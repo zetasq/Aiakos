@@ -46,24 +46,27 @@ public protocol AiaJSONDeserializer {
 public extension AiaJSONDeserializer {
     // The following two methods is set private due to Swift's immature reflection API
     private static func modelOfType(modelType: AiaModel.Type, fromJSONArray jsonArray: [AnyObject]) throws -> AiaModel {
-        let model = modelType.init()
+        throw AiaJSONSerializationError.FunctionNotImplementedYet
         
-        // TODO: Add this functionality when the reflection API improves
-        
-        return model
+//        let model = modelType.init()
+//        
+//        
+//        return model
     }
     
     private static func modelOfType(modelType: AiaModel.Type, fromJSONArrayData jsonData: NSData) throws -> AiaModel {
-        do {
-            if let jsonArray = try NSJSONSerialization.JSONObjectWithData(jsonData, options: []) as? [AnyObject] {
-                let model = try modelOfType(modelType, fromJSONArray: jsonArray)
-                return model
-            } else {
-                throw AiaJSONSerializationError.InvalidJSONContainerStructure
-            }
-        } catch {
-            throw error
-        }
+        throw AiaJSONSerializationError.FunctionNotImplementedYet
+
+//        do {
+//            if let jsonArray = try NSJSONSerialization.JSONObjectWithData(jsonData, options: []) as? [AnyObject] {
+//                let model = try modelOfType(modelType, fromJSONArray: jsonArray)
+//                return model
+//            } else {
+//                throw AiaJSONSerializationError.InvalidJSONContainerStructure
+//            }
+//        } catch {
+//            throw error
+//        }
     }
     
     
@@ -141,112 +144,22 @@ public extension AiaJSONDeserializer {
             model = modelType.init()
         }
         
-        if let customPropertyMapping = model as? AiaJSONCustomPropertyMapping {
-            
+        var propertyMapping: [String: String] = [:]
+        
+        if let customPropertyMappingObj = model as? AiaJSONCustomPropertyMapping {
+            propertyMapping = customPropertyMappingObj.dynamicType.customPropertyMapping
         } else {
             let mirror = Mirror(reflecting: model)
             for child in mirror.children {
                 if let propertyName = child.label {
-                    
-
-                    // Single Object
-                    if let _ = child.value as? String {
-                        if let stringObject = jsonDictionary[propertyName] as? String {
-                            model.setValue(stringObject, forKey: propertyName)
-                        }
-                        continue
-                    }
-                    
-                    if let _ = child.value as? NSNumber {
-                        if let numberObject = jsonDictionary[propertyName] as? NSNumber {
-                            model.setValue(numberObject, forKey: propertyName)
-                        }
-                        continue
-                    }
-                    
-                    if let propertyModel = child.value as? AiaModel {
-                        do {
-                            if let jsonArrayObject = jsonDictionary[propertyName] as? [AnyObject] {
-                                let newPropertyModel = try modelOfType(propertyModel.dynamicType, fromJSONArray: jsonArrayObject)
-                                model.setValue(newPropertyModel, forKey: propertyName)
-                                
-                            } else if let jsonDictionaryObject = jsonDictionary[propertyName] as? [String: AnyObject] {
-                                let newPropertyModel = try modelOfType(propertyModel.dynamicType, fromJSONDictionary: jsonDictionaryObject)
-                                model.setValue(newPropertyModel, forKey: propertyName)
-                                
-                            }
-                        } catch {
-                            #if DEBUG
-                                print("Error in deserializing property: <\(propertyName)> of model: \(modelType)")
-                            #endif
-                        }
-                        
-                        continue
-                    }
-                    
-                    
-                    // Array Object
-                    if let _ = child.value as? [String] {
-                        if let stringArray = jsonDictionary[propertyName] as? [String] {
-                            model.setValue(stringArray, forKey: propertyName)
-                        }
-                        continue
-                    }
-                    
-                    if let _ = child.value as? [NSNumber] {
-                        if let numberArray = jsonDictionary[propertyName] as? [NSNumber] {
-                            model.setValue(numberArray, forKey: propertyName)
-                        }
-                        continue
-                    }
-                    
-                    if let propertyArrayModel = child.value as? [AiaModel] {
-                        do {
-                            let elementModelType = propertyArrayModel.dynamicType.Generator.Element().dynamicType
-                            
-                            if let subJsonArray = jsonDictionary[propertyName] as? [AnyObject] {
-                                let newPropertyArrayModel = try modelArrayOfType(elementModelType, fromJSONArray: subJsonArray)
-                                model.setValue(newPropertyArrayModel, forKey: propertyName)
-                            }
-                        } catch {
-                            #if DEBUG
-                                print("Error in deserializing property: <\(propertyName)> of model: \(modelType)")
-                            #endif
-                        }
-                        
-                        continue
-                    }
-                    
-                    // Dictionary Object
-                    if let _ = child.value as? [String: String] {
-                        if let strstrDictionary = jsonDictionary[propertyName] as? [String: String] {
-                            model.setValue(strstrDictionary, forKey: propertyName)
-                        }
-                        continue
-                    }
-                    
-                    if let _ = child.value as? [String: NSNumber] {
-                        if let strnbrDictionary = jsonDictionary[propertyName] as? [String: NSNumber] {
-                            model.setValue(strnbrDictionary, forKey: propertyName)
-                        }
-                        continue
-                    }
-                    
-                    if let propertyDictionaryModel = child.value as? [String: AiaModel] {
-                        do {
-                            let valueModelType = propertyDictionaryModel.dynamicType.Value().dynamicType
-                            
-                            if let subJsonDictionary = jsonDictionary[propertyName] as? [String: AnyObject] {
-                                let newPropertyDictionaryModel = try modelDictionaryOfType(valueModelType, fromJSONDictionary: subJsonDictionary)
-                                model.setValue(newPropertyDictionaryModel, forKey: propertyName)
-                            }
-                        } catch {
-                            #if DEBUG
-                                print("Error in deserializing property: <\(propertyName)> of model: \(modelType)")
-                            #endif
-                        }
-                    }
+                    propertyMapping[propertyName] = propertyName
                 }
+            }
+        }
+        
+        for (propertyName, mappedJSONKey) in propertyMapping {
+            if let value = jsonDictionary[mappedJSONKey] {
+                model.setValue(value, forPropertyName: propertyName)
             }
         }
         

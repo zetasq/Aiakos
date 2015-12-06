@@ -19,5 +19,5 @@ public protocol AiaJSONCustomDeserializable {
 }
 
 public protocol AiaJSONCustomPropertyMapping {
-    var customPropertyMapping: DictionaryLiteral<String, String> { get }
+    static var customPropertyMapping: [String: String] { get }
 }

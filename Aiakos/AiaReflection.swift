@@ -8,7 +8,9 @@
 
 import Foundation
 
-internal func optionalizeAny(any: Any) -> Any? {
+
+// This convenience function is of poor use: when nil is returned, type information is discarded
+func optionalizeAny(any: Any) -> Any? {
     let mirror = Mirror(reflecting: any)
     if let displayStyle = mirror.displayStyle where displayStyle == .Optional {
         if mirror.children.count > 0 {
