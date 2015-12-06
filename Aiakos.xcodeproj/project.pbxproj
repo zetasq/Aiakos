@@ -10,8 +10,14 @@
 		D4CC00FA1C12F8DE00134D62 /* Aiakos.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CC00F91C12F8DE00134D62 /* Aiakos.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D4CC01011C12F8DE00134D62 /* Aiakos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4CC00F61C12F8DE00134D62 /* Aiakos.framework */; };
 		D4CC01061C12F8DE00134D62 /* AiakosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC01051C12F8DE00134D62 /* AiakosTests.swift */; };
-		D4CC01111C12FA8800134D62 /* AiaJSONSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC01101C12FA8800134D62 /* AiaJSONSerializable.swift */; };
-		D4CC01121C12FA8800134D62 /* AiaJSONSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC01101C12FA8800134D62 /* AiaJSONSerializable.swift */; };
+		D4CC01111C12FA8800134D62 /* AiaJSONCustomConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC01101C12FA8800134D62 /* AiaJSONCustomConvertible.swift */; };
+		D4CC01121C12FA8800134D62 /* AiaJSONCustomConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC01101C12FA8800134D62 /* AiaJSONCustomConvertible.swift */; };
+		D4CC01181C13256200134D62 /* AiaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC01171C13256200134D62 /* AiaModel.swift */; };
+		D4CC01191C13256200134D62 /* AiaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC01171C13256200134D62 /* AiaModel.swift */; };
+		D4CC011E1C13C2C900134D62 /* AiaConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC011D1C13C2C900134D62 /* AiaConverter.swift */; };
+		D4CC011F1C13C2C900134D62 /* AiaConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC011D1C13C2C900134D62 /* AiaConverter.swift */; };
+		D4CC01211C14258B00134D62 /* AiaReflection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC01201C14258B00134D62 /* AiaReflection.swift */; };
+		D4CC01221C14258B00134D62 /* AiaReflection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CC01201C14258B00134D62 /* AiaReflection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,7 +37,10 @@
 		D4CC01001C12F8DE00134D62 /* AiakosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AiakosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4CC01051C12F8DE00134D62 /* AiakosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AiakosTests.swift; sourceTree = "<group>"; };
 		D4CC01071C12F8DE00134D62 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D4CC01101C12FA8800134D62 /* AiaJSONSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiaJSONSerializable.swift; sourceTree = "<group>"; };
+		D4CC01101C12FA8800134D62 /* AiaJSONCustomConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiaJSONCustomConvertible.swift; sourceTree = "<group>"; };
+		D4CC01171C13256200134D62 /* AiaModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiaModel.swift; sourceTree = "<group>"; };
+		D4CC011D1C13C2C900134D62 /* AiaConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiaConverter.swift; sourceTree = "<group>"; };
+		D4CC01201C14258B00134D62 /* AiaReflection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiaReflection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,9 +83,12 @@
 		D4CC00F81C12F8DE00134D62 /* Aiakos */ = {
 			isa = PBXGroup;
 			children = (
-				D4CC00F91C12F8DE00134D62 /* Aiakos.h */,
 				D4CC00FB1C12F8DE00134D62 /* Info.plist */,
-				D4CC01101C12FA8800134D62 /* AiaJSONSerializable.swift */,
+				D4CC00F91C12F8DE00134D62 /* Aiakos.h */,
+				D4CC01171C13256200134D62 /* AiaModel.swift */,
+				D4CC01101C12FA8800134D62 /* AiaJSONCustomConvertible.swift */,
+				D4CC011D1C13C2C900134D62 /* AiaConverter.swift */,
+				D4CC01201C14258B00134D62 /* AiaReflection.swift */,
 			);
 			path = Aiakos;
 			sourceTree = "<group>";
@@ -198,7 +210,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4CC01111C12FA8800134D62 /* AiaJSONSerializable.swift in Sources */,
+				D4CC01211C14258B00134D62 /* AiaReflection.swift in Sources */,
+				D4CC011E1C13C2C900134D62 /* AiaConverter.swift in Sources */,
+				D4CC01111C12FA8800134D62 /* AiaJSONCustomConvertible.swift in Sources */,
+				D4CC01181C13256200134D62 /* AiaModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,7 +221,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4CC01121C12FA8800134D62 /* AiaJSONSerializable.swift in Sources */,
+				D4CC011F1C13C2C900134D62 /* AiaConverter.swift in Sources */,
+				D4CC01221C14258B00134D62 /* AiaReflection.swift in Sources */,
+				D4CC01121C12FA8800134D62 /* AiaJSONCustomConvertible.swift in Sources */,
+				D4CC01191C13256200134D62 /* AiaModel.swift in Sources */,
 				D4CC01061C12F8DE00134D62 /* AiakosTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -385,6 +403,7 @@
 				D4CC010C1C12F8DE00134D62 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D4CC010D1C12F8DE00134D62 /* Build configuration list for PBXNativeTarget "AiakosTests" */ = {
 			isa = XCConfigurationList;
@@ -393,6 +412,7 @@
 				D4CC010F1C12F8DE00134D62 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
