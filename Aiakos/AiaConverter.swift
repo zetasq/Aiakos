@@ -15,7 +15,11 @@ public enum AiaJSONSerializationError: ErrorType {
     case FunctionNotImplementedYet
 }
 
-public class AiaConverter: AiaJSONConverter {}
+
+public class AiaConverter: AiaJSONConverter {
+    static var jsonPropertyMappingPool: [String: [String: String]] = [:]
+    
+}
 
 public protocol AiaJSONConverter: AiaJSONSerializer, AiaJSONDeserializer {}
 
@@ -27,8 +31,8 @@ public protocol AiaJSONSerializer {
 
 // MARK: - AiaJSONDeserializer
 public protocol AiaJSONDeserializer {
-//    static func modelOfType(modelType: AiaModel.Type, fromJSONArray jsonArray: [AnyObject]) throws -> AiaModel
-//    static func modelOfType(modelType: AiaModel.Type, fromJSONArrayData jsonData: NSData) throws -> AiaModel
+    //    static func modelOfType(modelType: AiaModel.Type, fromJSONArray jsonArray: [AnyObject]) throws -> AiaModel
+    //    static func modelOfType(modelType: AiaModel.Type, fromJSONArrayData jsonData: NSData) throws -> AiaModel
     
     
     static func modelArrayOfType(modelType: AiaModel.Type, fromJSONArray jsonArray: [AnyObject]) throws -> [AiaModel]
@@ -48,25 +52,25 @@ public extension AiaJSONDeserializer {
     private static func modelOfType(modelType: AiaModel.Type, fromJSONArray jsonArray: [AnyObject]) throws -> AiaModel {
         throw AiaJSONSerializationError.FunctionNotImplementedYet
         
-//        let model = modelType.init()
-//        
-//        
-//        return model
+        //        let model = modelType.init()
+        //
+        //
+        //        return model
     }
     
     private static func modelOfType(modelType: AiaModel.Type, fromJSONArrayData jsonData: NSData) throws -> AiaModel {
         throw AiaJSONSerializationError.FunctionNotImplementedYet
-
-//        do {
-//            if let jsonArray = try NSJSONSerialization.JSONObjectWithData(jsonData, options: []) as? [AnyObject] {
-//                let model = try modelOfType(modelType, fromJSONArray: jsonArray)
-//                return model
-//            } else {
-//                throw AiaJSONSerializationError.InvalidJSONContainerStructure
-//            }
-//        } catch {
-//            throw error
-//        }
+        
+        //        do {
+        //            if let jsonArray = try NSJSONSerialization.JSONObjectWithData(jsonData, options: []) as? [AnyObject] {
+        //                let model = try modelOfType(modelType, fromJSONArray: jsonArray)
+        //                return model
+        //            } else {
+        //                throw AiaJSONSerializationError.InvalidJSONContainerStructure
+        //            }
+        //        } catch {
+        //            throw error
+        //        }
     }
     
     
@@ -144,17 +148,26 @@ public extension AiaJSONDeserializer {
             model = modelType.init()
         }
         
-        var propertyMapping: [String: String] = [:]
         
-        if let customPropertyMappingObj = model as? AiaJSONCustomPropertyMapping {
-            propertyMapping = customPropertyMappingObj.dynamicType.customPropertyMapping
+        var propertyMapping: [String: String]
+        
+        if let cachedMapping = AiaConverter.jsonPropertyMappingPool["\(modelType)"] {
+            propertyMapping = cachedMapping
         } else {
-            let mirror = Mirror(reflecting: model)
-            for child in mirror.children {
-                if let propertyName = child.label {
-                    propertyMapping[propertyName] = propertyName
+            if let customPropertyMappingObj = model as? AiaJSONCustomPropertyMapping {
+                propertyMapping = customPropertyMappingObj.dynamicType.customPropertyMapping
+            } else {
+                propertyMapping = [:]
+                
+                let mirror = Mirror(reflecting: model)
+                for child in mirror.children {
+                    if let propertyName = child.label {
+                        propertyMapping[propertyName] = propertyName
+                    }
                 }
             }
+            
+            AiaConverter.jsonPropertyMappingPool["\(modelType)"] = propertyMapping
         }
         
         for (propertyName, mappedJSONKey) in propertyMapping {
