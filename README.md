@@ -53,7 +53,7 @@ class MyModel: AiaModel {
     var version: NSNumber = 0
 }
 ```
-If you want to make a custom mapping between property names and JSON keys, conform your model to AiaJSONCustomPropertyMapping
+If you want to make a custom mapping between property names and JSON keys, conform your model to AiaJSONCustomPropertyMapping. Only properties whose name returned by customPropertyMapping will be (de)serialized from/to JSON data.
 ```swift
 import Aiakos
 
@@ -75,4 +75,19 @@ class MySubModel: AiaModel, AiaJSONCustomPropertyMapping {
     }
 }
 ```
-Only properties whose name returned by customPropertyMapping will be (de)serialized from/to JSON data.
+Deserialize JSON by using AiaConverter's class methods (for detailed list of methods, check AiaConverter's API):
+```swift
+import Aiakos
+
+func test() {
+    Alamofire.request(.GET, "https://api.github.com/users/mralexgray/repos")
+        .response { (request, response, data, error) -> Void in
+            do {
+                let models = try AiaConverter.modelArrayOfType(MyModel.self, fromJSONArrayData: data!)
+                print(models)
+            } catch {
+                print(error)
+            }
+    }
+}
+```
