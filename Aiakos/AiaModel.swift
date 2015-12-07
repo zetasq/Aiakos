@@ -21,6 +21,9 @@ public class AiaModel: NSObject {
 
 extension AiaModel: AiaJSONSerializable, AiaJSONDeserializable {
     // MARK: - AiaJSONSerializable
+    var mappedJSON: [String: AnyObject] {
+        return [:]
+    }
     
     // MARK: - AiaJSONDeserializable
     func setValue(value: AnyObject, forPropertyName propertyName: String) {
@@ -78,23 +81,6 @@ extension AiaModel: AiaJSONSerializable, AiaJSONDeserializable {
             return
         }
         
-        if let propertyArrayModel = oldValue as? [AiaModel] {
-            do {
-                let elementModelType = propertyArrayModel.dynamicType.Generator.Element().dynamicType
-                
-                if let subJsonArray = value as? [AnyObject] {
-                    let newPropertyArrayModel = try AiaConverter.modelArrayOfType(elementModelType, fromJSONArray: subJsonArray)
-                    self.setValue(newPropertyArrayModel, forKey: propertyName)
-                }
-            } catch {
-                #if DEBUG
-                    print("Error in deserializing property: <\(propertyName)> of model: \(modelType)")
-                #endif
-            }
-            
-            return
-        }
-        
         // Dictionary Object
         if let _ = oldValue as? [String: String] {
             if let strstrDictionary = value as? [String: String] {
@@ -111,27 +97,11 @@ extension AiaModel: AiaJSONSerializable, AiaJSONDeserializable {
             
             return
         }
-        
-        if let propertyDictionaryModel = oldValue as? [String: AiaModel] {
-            do {
-                let valueModelType = propertyDictionaryModel.dynamicType.Value().dynamicType
-                
-                if let subJsonDictionary = value as? [String: AnyObject] {
-                    let newPropertyDictionaryModel = try AiaConverter.modelDictionaryOfType(valueModelType, fromJSONDictionary: subJsonDictionary)
-                    self.setValue(newPropertyDictionaryModel, forKey: propertyName)
-                }
-            } catch {
-                #if DEBUG
-                    print("Error in deserializing property: <\(propertyName)> of model: \(modelType)")
-                #endif
-            }
-        }
-
     }
 }
 
 protocol AiaJSONSerializable {
-    
+    var mappedJSON: [String: AnyObject] { get }
 }
 
 protocol AiaJSONDeserializable {
