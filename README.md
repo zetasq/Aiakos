@@ -42,7 +42,7 @@ If you prefer not to use Carthage, you can integrate Aiakos into your project ma
 ### (de)Serializing from/to JSON data
 
 Just make your model object inherit from AiaModel, that's it :)
-> All these property types are allowed: String(NSString), NSNumber, AiaModel, [String], [NSNumber], [AiaModel], [String: String], [String: NSNumber], [String: AiaModel]. If you find some type is missed, fire me an issue :)
+> All these property types are allowed: String(NSString), NSNumber, AiaModel, [String], [NSNumber], [String: String], [String: NSNumber]. I try to add [AiaModel] and [String: AiaModel], but I can't fetch the associated model type using reflection. I hope this can be fixed by Swift 3.0's more powerful reflection :)
 
 ```swift
 import Aiakos
