@@ -85,7 +85,7 @@ class MySubModel: AiaModel, AiaJSONCustomPropertyMapping {
     }
 }
 ```
-Deserialize JSON by using **AiaConverter**'s class methods (for detailed list of methods, check **AiaConverter**'s API):
+(De)serialize JSON by using **AiaConverter**'s class methods (for detailed list of methods, check **AiaConverter**'s API):
 ```swift
 import Aiakos
 
@@ -93,8 +93,9 @@ func test() {
     Alamofire.request(.GET, "https://api.github.com/users/mralexgray/repos")
         .response { (request, response, data, error) -> Void in
             do {
-                let models = try AiaConverter.modelArrayOfType(MyModel.self, fromJSONArrayData: data!)
-                print(models)
+                let models = try AiaConverter.modelArrayOfType(MyModel.self, fromJSONArrayData: data!) // deserializing
+                
+                let recreatedData = try AiaConverter.jsonArrayDataFromModelArray(models) // serializing
             } catch {
                 print(error)
             }
