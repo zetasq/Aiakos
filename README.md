@@ -37,12 +37,12 @@ Run `carthage` to build the framework and drag the built `Aiakos.framework` into
 If you prefer not to use Carthage, you can integrate Aiakos into your project manually.
 
 ## Usage
-> Due to Swift 2.1 reflection API's poor function, you need to make properties non-optional, otherwise Aiakos could not find the unwrapped type of your optional properties. So just make your properties non-optional and give each of them an initial value.
+> Due to Swift 2.1 reflection API's poor function, you need to make properties **non-optional**, otherwise Aiakos could not find the unwrapped type of your optional properties. So just make your properties non-optional and give each of them an initial value.
 
 ### (de)Serializing from/to JSON data
 
 Just make your model object inherit from AiaModel, that's it :)
-> All these property types are allowed: String(NSString), NSNumber, AiaModel, [String], [NSNumber], [AiaModel], [String: String], [String: NSNumber], [String: AiaModel].If you use property of type [AiaModel] or [String: AiaModel], be sure to override **modelContainerPropertyAnnotation** in your model type.
+> All these property types are allowed: **String(NSString), NSNumber, AiaModel, [String], [NSNumber], [AiaModel], [String: String], [String: NSNumber], [String: AiaModel]**.If you use property of type [AiaModel] or [String: AiaModel], be sure to override **modelContainerPropertyAnnotation** in your model type.
 
 ```swift
 import Aiakos
@@ -63,7 +63,7 @@ class MyModel: AiaModel {
     }
 }
 ```
-If you want to make a custom mapping between property names and JSON keys, conform your model to AiaJSONCustomPropertyMapping. Only properties whose name returned by customPropertyMapping will be (de)serialized from/to JSON data.
+If you want to make a custom mapping between property names and JSON keys, conform your model to **AiaJSONCustomPropertyMapping**. Only properties whose name returned by **customPropertyMapping** will be (de)serialized from/to JSON data.
 ```swift
 import Aiakos
 
@@ -85,7 +85,7 @@ class MySubModel: AiaModel, AiaJSONCustomPropertyMapping {
     }
 }
 ```
-Deserialize JSON by using AiaConverter's class methods (for detailed list of methods, check AiaConverter's API):
+Deserialize JSON by using **AiaConverter**'s class methods (for detailed list of methods, check **AiaConverter**'s API):
 ```swift
 import Aiakos
 
