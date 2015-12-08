@@ -55,7 +55,7 @@ class MyModel: AiaModel {
     var subModels: [MySubModel] = []
     var modelDic: [String: MySubModel] = [:]
     
-    override static var modelContainerPropertyAnnotation: [String: AiaModelContainerPropertyType]? {
+    override class var modelContainerPropertyAnnotation: [String: AiaModelContainerPropertyType]? {
         return [
             "subModels": .ArrayOfModel(MySubModel.self),
             "modelDic": .DictionaryOfModel(MySubModel.self)
