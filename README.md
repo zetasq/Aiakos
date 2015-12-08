@@ -102,3 +102,8 @@ func test() {
     }
 }
 ```
+## Persistence
+
+Aiakos doesn't automatically persist your objects for you. However, `AiaModel`
+does conform to `<NSCoding>`, so model objects can be archived to disk using
+`NSKeyedArchiver`. **Caution: Here AiaJSONCustomPropertyMapping is also used to map property names.**
