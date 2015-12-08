@@ -9,9 +9,30 @@
 import Foundation
 
 
-public class AiaModel: NSObject {
+public class AiaModel: NSObject, NSCoding {
     public required override init() {
         super.init()
+    }
+    
+    public required convenience init?(coder aDecoder: NSCoder) {
+        self.init()
+        
+        let propertyMapping = AiaConverter.propertyMappingForModel(self)
+        
+        for (propertyName, mappedJSONKey) in propertyMapping {
+            if let decodedObject = aDecoder.decodeObjectForKey(mappedJSONKey) {
+                self.setValue(decodedObject, forPropertyName: propertyName)
+            }
+        }
+    }
+    
+    public func encodeWithCoder(aCoder: NSCoder) {
+        let propertyMapping = AiaConverter.propertyMappingForModel(self)
+        for (propertyName, mappedJSONKey) in propertyMapping {
+            if let propertyValue = self.valueForKey(propertyName) {
+                aCoder.encodeObject(propertyValue, forKey: mappedJSONKey)
+            }
+        }
     }
     
     // MARK: - AiaJSONConvertible
@@ -19,6 +40,7 @@ public class AiaModel: NSObject {
         return nil
     }
 }
+
 
 public enum AiaModelContainerPropertyType {
     case ArrayOfModel(AiaModel.Type) // var XXXproperty = [AiaModel]
