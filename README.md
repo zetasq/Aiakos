@@ -7,7 +7,7 @@ Aiskos is an iOS framework for transformation and (de)serialization between JSON
 
 - [x] Automatic (de)serialization between model objects and JSON data with custom options.
 - [x] Automatic archive/unarchive of model objects.
-- 
+
 ## Requirements
 
 - iOS 9.1+ 
