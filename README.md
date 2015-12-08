@@ -42,7 +42,7 @@ If you prefer not to use Carthage, you can integrate Aiakos into your project ma
 ### (de)Serializing from/to JSON data
 
 Just make your model object inherit from AiaModel, that's it :)
-> All these property types are allowed: String(NSString), NSNumber, AiaModel, [String], [NSNumber], [String: String], [String: NSNumber]. I try to add [AiaModel] and [String: AiaModel], but I can't fetch the associated model type using reflection. I hope this can be fixed by Swift 3.0's more powerful reflection :)
+> All these property types are allowed: String(NSString), NSNumber, AiaModel, [String], [NSNumber], [AiaModel], [String: String], [String: NSNumber], [String: AiaModel].If you use property of type [AiaModel] or [String: AiaModel], be sure to override **modelContainerPropertyAnnotation** in your model type.
 
 ```swift
 import Aiakos
@@ -51,6 +51,16 @@ class MyModel: AiaModel {
     var args: [String: String] = [:]
     var origin: NSString = ""
     var version: NSNumber = 0
+    
+    var subModels: [MySubModel] = []
+    var modelDic: [String: MySubModel] = [:]
+    
+    override static var modelContainerPropertyAnnotation: [String: AiaModelContainerPropertyType]? {
+        return [
+            "subModels": .ArrayOfModel(MySubModel.self),
+            "modelDic": .DictionaryOfModel(MySubModel.self)
+        ]
+    }
 }
 ```
 If you want to make a custom mapping between property names and JSON keys, conform your model to AiaJSONCustomPropertyMapping. Only properties whose name returned by customPropertyMapping will be (de)serialized from/to JSON data.
