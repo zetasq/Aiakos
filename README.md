@@ -42,7 +42,7 @@ If you prefer not to use Carthage, you can integrate Aiakos into your project ma
 ### (de)Serializing from/to JSON data
 
 Just make your model object inherit from AiaModel, that's it :)
-> All these property types are allowed: **String(NSString), NSNumber, AiaModel, [String], [NSNumber], [AiaModel], [String: String], [String: NSNumber], [String: AiaModel]**.If you use property of type [AiaModel] or [String: AiaModel], be sure to override **modelContainerPropertyAnnotation** in your model type.
+> All these property types are allowed: **String(NSString), NSNumber, AiaModel, [String], [NSNumber], [AiaModel], [String: String], [String: NSNumber], [String: AiaModel]**.If you use property of type **[AiaModel]** or **[String: AiaModel]**, be sure to override **modelContainerPropertyAnnotation** in your model type.
 
 ```swift
 import Aiakos
