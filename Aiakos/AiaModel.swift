@@ -28,9 +28,79 @@ public enum AiaModelContainerPropertyType {
 extension AiaModel: AiaJSONConvertible {
     
     // MARK: - AiaJSONSerializable
-    var mappedJSONDictionary: [String: AnyObject] {
-        // TODO:
-        return [:]
+    func jsonObjectForPropertyName(propertyName: String) -> AnyObject? {
+        guard let propertyValue = self.valueForKey(propertyName) else {
+            return nil
+        }
+        
+        // check if custom model provides annotation for model container: [AiaModel] and [String: AiaModel]
+        if let annotation = self.dynamicType.modelContainerPropertyAnnotation {
+            if let containerPropertyType = annotation[propertyName] {
+                do {
+                    switch containerPropertyType {
+                    case .ArrayOfModel(_):
+                        if let modelArray = propertyValue as? [AiaModel] {
+                            let jsonArray = try AiaConverter.jsonArrayFromModelArray(modelArray)
+                            return jsonArray
+                        }
+                    case .DictionaryOfModel(_):
+                        if let modelDictionary = propertyValue as? [String: AiaModel] {
+                            let jsonDictionary = try AiaConverter.jsonDictionaryFromModelDictionary(modelDictionary)
+                            return jsonDictionary
+                        }
+                    }
+                } catch {
+                    #if DEBUG
+                        debugPrint(error)
+                    #endif
+                }
+                
+                return nil
+            }
+        }
+        
+        // Single Object
+        if let jsonString = propertyValue as? String {
+            return jsonString
+        }
+        
+        if let jsonNumber = propertyValue as? NSNumber {
+            return jsonNumber
+        }
+        
+        if let propertyModel = propertyValue as? AiaModel {
+            do {
+                let jsonDictionary = try AiaConverter.jsonDictionaryFromModel(propertyModel)
+                return jsonDictionary
+            } catch {
+                #if DEBUG
+                    print("Error in serializing property: <\(propertyName)> of model: \(propertyModel.dynamicType)")
+                #endif
+            }
+            
+            return nil
+        }
+        
+        
+        // Array Object
+        if let jsonStringArray = propertyValue as? [String] {
+            return jsonStringArray
+        }
+        
+        if let jsonNumberArray = propertyValue as? [NSNumber] {
+            return jsonNumberArray
+        }
+        
+        // Dictionary Object
+        if let jsonStringDictionary = propertyValue as? [String: String] {
+            return jsonStringDictionary
+        }
+        
+        if let jsonNumberDictionary = propertyValue as? [String: NSNumber] {
+            return jsonNumberDictionary
+        }
+        
+        return nil
     }
     
     // MARK: - AiaJSONDeserializable
@@ -82,7 +152,6 @@ extension AiaModel: AiaJSONConvertible {
         
         if let propertyModel = oldValue as? AiaModel {
             do {
-                // Todo: due to Swift 2.1 poor support for reflection on collectionType, collection-type model is not supported
                 if let jsonDictionaryObject = value as? [String: AnyObject] {
                     let newPropertyModel = try AiaConverter.modelOfType(propertyModel.dynamicType, fromJSONDictionary: jsonDictionaryObject)
                     self.setValue(newPropertyModel, forKey: propertyName)
@@ -140,7 +209,7 @@ protocol AiaJSONConvertible: AiaJSONSerializable, AiaJSONDeserializable {
 }
 
 protocol AiaJSONSerializable {
-    var mappedJSONDictionary: [String: AnyObject] { get }
+    func jsonObjectForPropertyName(propertyName: String) -> AnyObject?
 }
 
 protocol AiaJSONDeserializable {

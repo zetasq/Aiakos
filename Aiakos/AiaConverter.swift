@@ -14,12 +14,39 @@ public enum AiaJSONConversionError: ErrorType {
     case ModelSerializationFailure
 }
 
+internal var cachedPropertyKeyMapping: [String: [String: String]] = [:]
 
-public class AiaConverter: AiaJSONConverter {
-    static var cachedPropertyKeyMapping: [String: [String: String]] = [:]
-}
+
+public class AiaConverter: AiaJSONConverter {}
 
 public protocol AiaJSONConverter: AiaJSONSerializer, AiaJSONDeserializer {}
+
+extension AiaConverter {
+    static func propertyMappingForModel(model: AiaModel) -> [String: String] {
+        var propertyMapping: [String: String]
+        
+        if let cachedMapping = cachedPropertyKeyMapping["\(model.dynamicType)"] {
+            propertyMapping = cachedMapping
+        } else {
+            if let customPropertyMappingObj = model as? AiaJSONCustomPropertyMapping {
+                propertyMapping = customPropertyMappingObj.dynamicType.customPropertyMapping
+            } else {
+                propertyMapping = [:]
+                
+                let mirror = Mirror(reflecting: model)
+                for child in mirror.children {
+                    if let propertyName = child.label {
+                        propertyMapping[propertyName] = propertyName
+                    }
+                }
+            }
+            
+            cachedPropertyKeyMapping["\(model.dynamicType)"] = propertyMapping
+        }
+        
+        return propertyMapping
+    }
+}
 
 // MARK: - AiaJSONSerializer
 public protocol AiaJSONSerializer {
@@ -76,9 +103,19 @@ public extension AiaJSONSerializer {
     
     
     static func jsonDictionaryFromModel(model: AiaModel) throws -> [String: AnyObject] {
-        throw AiaJSONConversionError.InvalidJSONDictionaryStructure
+        var jsonDictionary: [String: AnyObject] = [:]
         
+        let propertyMapping = AiaConverter.propertyMappingForModel(model)
+        
+        for (propertyName, mappedJSONKey) in propertyMapping {
+            if let jsonObject = model.jsonObjectForPropertyName(propertyName) {
+                jsonDictionary[mappedJSONKey] = jsonObject
+            }
+        }
+
+        return jsonDictionary
     }
+    
     static func jsonDictionaryDataFromModel(model: AiaModel) throws -> NSData {
         let jsonDictionary = try jsonDictionaryFromModel(model)
         let jsonDictionaryData = try NSJSONSerialization.dataWithJSONObject(jsonDictionary, options: [])
@@ -166,26 +203,7 @@ public extension AiaJSONDeserializer {
         }
         
         
-        var propertyMapping: [String: String]
-        
-        if let cachedMapping = AiaConverter.cachedPropertyKeyMapping["\(modelType)"] {
-            propertyMapping = cachedMapping
-        } else {
-            if let customPropertyMappingObj = model as? AiaJSONCustomPropertyMapping {
-                propertyMapping = customPropertyMappingObj.dynamicType.customPropertyMapping
-            } else {
-                propertyMapping = [:]
-                
-                let mirror = Mirror(reflecting: model)
-                for child in mirror.children {
-                    if let propertyName = child.label {
-                        propertyMapping[propertyName] = propertyName
-                    }
-                }
-            }
-            
-            AiaConverter.cachedPropertyKeyMapping["\(modelType)"] = propertyMapping
-        }
+        let propertyMapping = AiaConverter.propertyMappingForModel(model)
         
         for (propertyName, mappedJSONKey) in propertyMapping {
             if let value = jsonDictionary[mappedJSONKey] {
