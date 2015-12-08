@@ -16,7 +16,7 @@ public enum AiaJSONConversionError: ErrorType {
 
 
 public class AiaConverter: AiaJSONConverter {
-    static var jsonPropertyMappingPool: [String: [String: String]] = [:]
+    static var cachedPropertyKeyMapping: [String: [String: String]] = [:]
 }
 
 public protocol AiaJSONConverter: AiaJSONSerializer, AiaJSONDeserializer {}
@@ -168,7 +168,7 @@ public extension AiaJSONDeserializer {
         
         var propertyMapping: [String: String]
         
-        if let cachedMapping = AiaConverter.jsonPropertyMappingPool["\(modelType)"] {
+        if let cachedMapping = AiaConverter.cachedPropertyKeyMapping["\(modelType)"] {
             propertyMapping = cachedMapping
         } else {
             if let customPropertyMappingObj = model as? AiaJSONCustomPropertyMapping {
@@ -184,7 +184,7 @@ public extension AiaJSONDeserializer {
                 }
             }
             
-            AiaConverter.jsonPropertyMappingPool["\(modelType)"] = propertyMapping
+            AiaConverter.cachedPropertyKeyMapping["\(modelType)"] = propertyMapping
         }
         
         for (propertyName, mappedJSONKey) in propertyMapping {

@@ -9,28 +9,61 @@
 import Foundation
 
 
-
-
 public class AiaModel: NSObject {
     public required override init() {
         super.init()
     }
     
+    // MARK: - AiaJSONConvertible
+    public class var modelContainerPropertyAnnotation: [String: AiaModelContainerPropertyType]? {
+        return nil
+    }
 }
 
+public enum AiaModelContainerPropertyType {
+    case ArrayOfModel(AiaModel.Type) // var XXXproperty = [AiaModel]
+    case DictionaryOfModel(AiaModel.Type) // var XXXproperty = [String: AiaModel]
+}
 
-extension AiaModel: AiaJSONSerializable, AiaJSONDeserializable {
+extension AiaModel: AiaJSONConvertible {
+    
     // MARK: - AiaJSONSerializable
-    var mappedJSON: [String: AnyObject] {
+    var mappedJSONDictionary: [String: AnyObject] {
+        // TODO:
         return [:]
     }
     
     // MARK: - AiaJSONDeserializable
     func setValue(value: AnyObject, forPropertyName propertyName: String) {
+        
         guard let oldValue = self.valueForKey(propertyName) else {
             return
         }
         
+        // check if custom model provides annotation for model container: [AiaModel] and [String: AiaModel]
+        if let annotation = self.dynamicType.modelContainerPropertyAnnotation {
+            if let containerPropertyType = annotation[propertyName] {
+                do {
+                    switch containerPropertyType {
+                    case .ArrayOfModel(let elementModelType):
+                        if let jsonArrayObject = value as? [AnyObject] {
+                            let newModelArray = try AiaConverter.modelArrayOfType(elementModelType, fromJSONArray: jsonArrayObject)
+                            self.setValue(newModelArray, forKey: propertyName)
+                        }
+                    case .DictionaryOfModel(let valueModelType):
+                        if let jsonDictionaryObject = value as? [String: AnyObject] {
+                            let newModelDictionary = try AiaConverter.modelDictionaryOfType(valueModelType, fromJSONDictionary: jsonDictionaryObject)
+                            self.setValue(newModelDictionary, forKey: propertyName)
+                        }
+                    }
+                } catch {
+                    #if DEBUG
+                        debugPrint(error)
+                    #endif
+                }
+                return
+            }
+        }
         
         // Single Object
         if let _ = oldValue as? String {
@@ -100,8 +133,14 @@ extension AiaModel: AiaJSONSerializable, AiaJSONDeserializable {
     }
 }
 
+
+
+protocol AiaJSONConvertible: AiaJSONSerializable, AiaJSONDeserializable {
+    static var modelContainerPropertyAnnotation: [String: AiaModelContainerPropertyType]? { get }
+}
+
 protocol AiaJSONSerializable {
-    var mappedJSON: [String: AnyObject] { get }
+    var mappedJSONDictionary: [String: AnyObject] { get }
 }
 
 protocol AiaJSONDeserializable {
