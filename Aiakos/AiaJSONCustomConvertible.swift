@@ -6,12 +6,7 @@
 //  Copyright © 2015 DSoftware. All rights reserved.
 //
 
-public protocol AiaJSONCustomConvertible: AiaJSONCustomSerializable, AiaJSONCustomDeserializable {}
-
-public protocol AiaJSONCustomSerializable {
-    static func customTypeForJSONSerializationFromJSONArray(array: [AnyObject]) -> AiaModel.Type
-    static func customTypeForJSONSerializationFromJSONDictionary(dictionary: [String: AnyObject]) -> AiaModel.Type
-}
+public protocol AiaJSONCustomConvertible: AiaJSONCustomDeserializable {}
 
 public protocol AiaJSONCustomDeserializable {
     static func customTypeForJSONDeserializationFromJSONArray(array: [AnyObject]) -> AiaModel.Type
