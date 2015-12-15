@@ -1,5 +1,5 @@
 # Aiakos
-Aiskos is an iOS framework for transformation and (de)serialization between JSON and model objects
+Aiakos is an iOS framework for transformation and (de)serialization between JSON and model objects
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
